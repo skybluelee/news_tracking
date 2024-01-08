@@ -152,12 +152,9 @@ def get_article(driver, link_list):
     path = "/opt/airflow/dags/news_1_raw_data.csv"
     df_no_duplicates.to_csv(path, index=False)
 
-def konlpy(df, article_list):
+def konlpy(df):
     logging.info("start") 
-    if df:
-        articles = df['article'].tolist()
-    elif article_list:
-        articles = article_list
+    articles = df['article'].tolist()
 
     print(articles[0])
     # 엔터를 삭제하는 함수
@@ -411,6 +408,7 @@ def track_update(search):
 
             articles_fianl = latest_article + articles
             print("articles_fianl", articles_fianl)
+            df = pd.DataFrame({'article': articles_fianl})
             matrix = konlpy(articles_fianl)
             for i in range(len(latest_article)):
                 for num in matrix[i][len(latest_article):]:

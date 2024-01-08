@@ -1,6 +1,7 @@
 import pendulum
 from airflow.models.dag import DAG
 from airflow.operators.python import PythonOperator
+from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 from datetime import datetime
@@ -22,7 +23,7 @@ options.add_argument('--disable-dev-shm-usage')
 with DAG(
     dag_id="news_etl",
     schedule = '30 * * * *',
-    start_date=pendulum.datetime(2024, 1, 8, 14, 30, tz="Asia/Seoul"),
+    start_date=pendulum.datetime(2024, 1, 8, 17, 00, tz="Asia/Seoul"),
     catchup=False,
     tags=["news"],
 ):
@@ -53,12 +54,12 @@ with DAG(
 
     extract_news = PythonOperator(task_id="extract_news", python_callable=extract_news)
 
-    def get_similarity_matrix():
-        logging.info("start") 
-        df = pd.read_csv('/opt/airflow/dags/news_1_raw_data.csv')
-        crawling.konlpy(df)
-
-    get_similarity_matrix = PythonOperator(task_id="get_similarity_matrix", python_callable=get_similarity_matrix)
+    spark_task = SparkSubmitOperator(
+        task_id='spark_task',
+        application="/usr/local/spark/app/get_similarity.py",  # Spark 코드가 저장된 경로
+        conn_id='spark_default',  # Airflow에서 설정한 Spark 연결 ID
+        dag=DAG,
+    )
 
     def get_representative_value():
         logging.info("start") 
@@ -69,10 +70,10 @@ with DAG(
     def s3_upload():
         korea_tz = timezone('Asia/Seoul')
         korea_time = datetime.now(korea_tz)
-        date = korea_time.strftime('%Y-%m-%d %H:%M')
+        date = korea_time.strftime('_%Y_%m_%d_%H_%M')
   
         bucket_name = "news-data"
-        key = str(date) + 'news_2_representative_data.csv'
+        key = 'news_2_representative_data' + str(date) + '.csv'
         local_file_path = "/opt/airflow/dags/news_2_representative_data.csv"
         hook = S3Hook(aws_conn_id='aws_conn')
         hook.load_file(
@@ -87,7 +88,7 @@ with DAG(
     def check_track():
         region = 'ap-northeast-1'
         service = 'es'
-        awsauth = AWS4Auth("AKIATNOQWNZFQBFA3PXJ", "OYgh1XYU/GjLVSALFFJ3qTqeZ6HoTh4dMfBvIFHn", region, service)
+        awsauth = AWS4Auth("access_key", "secret_key", region, service)
 
         host = "search-news-tracking-twuc6chnabn6eplckxlyenti44.ap-northeast-1.es.amazonaws.com"
 
@@ -104,4 +105,4 @@ with DAG(
 
     check_track = PythonOperator(task_id="check_track", python_callable=check_track)
 
-    extract_news >> get_similarity_matrix >> get_representative_value >> s3_upload >> check_track
+    extract_news >> spark_task >> get_representative_value >> s3_upload >> check_track
