@@ -21,7 +21,7 @@ search = OpenSearch(
 
 # 현재 추적 중인 뉴스 검색
 def get_track_news():
-    response = search.search(index='test', body={
+    response = search.search(index='news', body={
         "size": 0,
         "aggs": {
             "tracks": {
@@ -49,7 +49,7 @@ def get_track_news():
     # article_list 초기화
     article_list = []
 
-    response = search.search(index='test', body={
+    response = search.search(index='news', body={
         "sort": [{"new_input_time": {"order": "desc"}}],  # 최신순으로 정렬
         "query": {
             "exists": {
@@ -84,7 +84,7 @@ def get_track_news():
 
 # 설정할 track 번호를 지정하는 함수
 def get_track_value():
-    response = search.search(index='test', body={
+    response = search.search(index='news', body={
                                                 "size": 0,
                                                 "aggs": {
                                                     "unique_tracks": {
@@ -115,7 +115,7 @@ def get_track_value():
 
 # 추적 상태에 따라 track에 값을 추가하거나 제거하는 업데이트 함수
 def update_track_value(title, track_value):
-    response = search.search(index='test', body={
+    response = search.search(index='news', body={
         "query": {
             "bool": {
                 "must": [
@@ -132,7 +132,7 @@ def update_track_value(title, track_value):
 
         if current_track_value is not None:
             # track 필드가 이미 존재하면 값을 null로 설정
-            response = search.search(index='test', body={
+            response = search.search(index='news', body={
                 "query": {
                     "bool": {
                         "must": [
@@ -146,7 +146,7 @@ def update_track_value(title, track_value):
                 representative_title = hit['_source']['representative_title']
                 
                 # track 값을 null로 설정하는 업데이트 쿼리 실행
-                search.update_by_query(index='test', body={
+                search.update_by_query(index='news', body={
                     "script": {
                         "source": "ctx._source.track = null;",
                         "lang": "painless"
@@ -162,7 +162,7 @@ def update_track_value(title, track_value):
         else:
             # track 필드가 존재하면서 null인 경우 또는 track 필드가 존재하지 않는 경우 representative_title에 대한 track 값을 추가
             track_value = "your_track_value_here"  # 업데이트할 값 설정
-            search.update_by_query(index='test', body={
+            search.update_by_query(index='news', body={
                 "script": {
                     "source": """
                         if (ctx._source.containsKey('track')) {
@@ -249,7 +249,7 @@ def get_news_w_time_w_search(request):
             }
             }
 
-    response  = search.search(index="test", body=query)
+    response  = search.search(index="news", body=query)
     hits = response['hits']['hits']
     representative_title_count = {}
     
@@ -317,7 +317,7 @@ def get_news_w_time_wo_search(request):
         }
     }
     
-    response  = search.search(index="test", body=query)
+    response  = search.search(index="news", body=query)
     hits = response['hits']['hits']
     representative_title_count = {}
 
@@ -396,7 +396,7 @@ def get_news_wo_time_w_search(request):
             }
         }    
 
-    response  = search.search(index="test", body=query)
+    response  = search.search(index="news", body=query)
 
     hits = response['hits']['hits']
     representative_title_count = {}
