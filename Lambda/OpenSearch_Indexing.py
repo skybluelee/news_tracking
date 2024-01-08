@@ -8,7 +8,7 @@ region = 'ap-northeast-1' # e.g. us-west-1
 service = 'es'
 credentials = boto3.Session().get_credentials()
 #awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
-awsauth = AWS4Auth("AKIATNOQWNZFQBFA3PXJ", "OYgh1XYU/GjLVSALFFJ3qTqeZ6HoTh4dMfBvIFHn", region, service)
+awsauth = AWS4Auth("access_key", "secret_key", region, service)
 
 # OpenSearch 클러스터 엔드포인트
 OPENSEARCH_ENDPOINT = "https://search-news-tracking-twuc6chnabn6eplckxlyenti44.ap-northeast-1.es.amazonaws.com"
