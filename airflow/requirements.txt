@@ -1,2 +1,11 @@
 selenium
 webdriver_manager
+pandas
+numpy
+elasticsearch
+konlpy
+scikit-learn
+apache-airflow
+opensearch-py
+apache-airflow-providers-opensearch
+requests_aws4auth
