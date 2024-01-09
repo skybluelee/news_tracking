@@ -1,5 +1,4 @@
-# 시간과 검색 내용을 설정하여 검색하는 뉴스 엔진 구현 및 특정 기사를 선택하면 해당 뉴스와 유사한 뉴스를 추적하여 사용자에게 제공하는 웹 서비스를 구현
-
+# 뉴스 검색과 추적 기능이 있는 웹 서비스 개발
 ## **개요**
 
 > **프로젝트:** News Tracking
@@ -15,14 +14,33 @@
 > **사용 기술:** Python, AWS, Docker, Airflow, Spark, S3, Lambda, OpenSearch, Django
 
 ## **프로젝트 상세**
-Airflow를 사용하여 뉴스를 수집하고 Spark에서 기사 내용간의 유사도를 판별후 대표값을 추가한 상태로 S3에 저장. 
+Docker에서 Airflow를 사용하여 뉴스를 수집하고 Spark에서 기사 내용간의 유사도를 판별후 대표값을 추가한 상태로 S3에 저장. 
 
 S3에 저장된 뉴스는 Lambda를 통해 OpenSearch로 데이터 전송.
 
 Django를 통해 OpenSearch의 데이터를 사용하여 검색 기능과 추적 기능이 있는 웹 서비스 구현.
 
-### **상태도**
+## **상태도**
 <img src="https://github.com/skybluelee/news_tracking/assets/107929903/52a70277-b80b-4458-ba33-0d9ba9d9afa9.png" width="900" height="600"/>
+
+## **결과**
+<img src="https://github.com/skybluelee/news_tracking/assets/107929903/1b35d5b0-0b3e-464a-9938-c205c0e389f.png" width="900" height="600"/>
+
+위는 초기 화면으로 날짜와 시간, 검색 내용을 포함하여 검색할 수 있다.
+
+<img src="https://github.com/skybluelee/news_tracking/assets/107929903/0f58f56a-eb56-4811-96b1-55da04b7c3e0.png" width="900" height="1500"/>
+
+검색 결과는 유사한 기사가 많은 순서대로 보여준다. 해당 타이틀을 클릭하면 유사 기사의 내용을 확인할 수 있으며, 후속 기사가 궁금하다면 '해당 뉴스 추적' 버튼을 눌러 뉴스를 추적한다.
+
+<img src="https://github.com/skybluelee/news_tracking/assets/107929903/13f22605-e4fd-4565-858d-213043de50be.png" width="900" height="1500"/>
+
+추적 버튼을 누르면 기존 기사에 track 필드와 값을 추가하여 Airflow로 뉴스를 수집한 후에 track 필드의 뉴스들과 유사도를 비교하고 track 값을 입력하는 방식으로 유사한 뉴스를 추가한다.
+
+<img src="https://github.com/skybluelee/news_tracking/assets/107929903/a2ae7e2b-118e-4b65-9670-1c5642b9b0db.png" width="900" height="1000"/>
+
+추적 뉴스는 화면의 track 바를 클릭하여 들어갈 수 있으며, 최신순으로 뉴스를 정렬한다.
+
+
 
 ### **Docker를 사용하여 Airflow, Spark, Selenium 이미지 사용**
 Airflow에서 Spark와 연동하고 사용하기 위해서는 [Provider packages](https://airflow.apache.org/docs/#providers-packages-docs-apache-airflow-providers-index-html)에서 Spark에 사용하는 모듈과 Java open-jdk가 필요하다. Dockefile 참조.
@@ -61,5 +79,10 @@ OpenSearch의 경우 IAM 사용자가 필요하다. 보안 구성 편집 -> IAM 
 > `views.py`: PUT, POST, GET, DELETE 등의 명령을 주로 여기서 처리한다.
 >
 > `settings.py`: ALLOWED_HOSTS에 본인 혹은 전체에 접속 권한을 추가한다.
+> 템플릿 위치를 지정한다. 나의 경우 `os.path.join(BASE_DIR)`를 TEMPLATES 'DIRS'에 추가하였다.
 >
-> `urls.py`: 
+> `urls.py`: 본인이 사용할 엔드포인트와 사용할 함수를 설정한다.
+
+가상 환경은 어디까지나 해당 인스턴스에서 다른 작업을 하는 경우, 혹은 할 예정인 경우에만 사용하면 된다.
+
+사용할 함수(주로 views.py에 있는)는 값과 html을 리턴한다. 이때 해당 html에서는 해당 값에 접근할 수 있다. 딕셔너리와 리스트 그리고 리스트 안에 여러 딕셔너리를 넣을 수도 있으니 잘 활용해보자.
