@@ -28,7 +28,7 @@ Django를 통해 OpenSearch의 데이터를 사용하여 검색 기능과 추적
 
 위는 초기 화면으로 날짜와 시간, 검색 내용을 포함하여 검색할 수 있다.
 
-<img src="https://github.com/skybluelee/news_tracking/assets/107929903/d5735363-08cb-4058-ae45-78c72b5cefd4.png" width="800" height="1000"/>
+<img src="https://github.com/skybluelee/news_tracking/assets/107929903/d5735363-08cb-4058-ae45-78c72b5cefd4.png" width="600" height="500"/>
 
 검색 결과는 유사한 기사가 많은 순서대로 보여준다. 해당 타이틀을 클릭하면 유사 기사의 내용을 확인할 수 있으며, 후속 기사가 궁금하다면 '해당 뉴스 추적' 버튼을 눌러 뉴스를 추적한다.
 
