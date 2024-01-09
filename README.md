@@ -24,7 +24,7 @@ Django를 통해 OpenSearch의 데이터를 사용하여 검색 기능과 추적
 <img src="https://github.com/skybluelee/news_tracking/assets/107929903/52a70277-b80b-4458-ba33-0d9ba9d9afa9.png" width="900" height="600"/>
 
 ## **결과**
-<img src="https://github.com/skybluelee/news_tracking/assets/107929903/1b35d5b0-0b3e-464a-9938-c205c0e389f.png" width="900" height="600"/>
+<img src="https://github.com/skybluelee/news_tracking/assets/107929903/3070e1fb-f93b-48cb-a166-ee8036990101.png" width="900" height="600"/>
 
 위는 초기 화면으로 날짜와 시간, 검색 내용을 포함하여 검색할 수 있다.
 
