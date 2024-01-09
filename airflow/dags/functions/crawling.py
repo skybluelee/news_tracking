@@ -17,6 +17,7 @@ def get_link_init(driver, date):
 
     link_list = [] # 링크를 담을 리스트
     page_num = 0   # 값을 증가시켜 각 페이지의 기사 링크 수집
+    use_link_list = []
     
     # 날짜 변경 후 최대 페이지 확인 작업
     # driver.get(url + str(1))
@@ -29,7 +30,7 @@ def get_link_init(driver, date):
     # for page_num in range(last_page + 1):
     print("link init")
     print("link search start")
-    for page_num in range(50):
+    for page_num in range(100):
         page_num += 1
         driver.get(url + str(page_num))
         container = driver.find_element(By.CLASS_NAME, "container")
@@ -42,8 +43,10 @@ def get_link_init(driver, date):
                 tag_a = j.find_elements(By.TAG_NAME, 'a')
                 href = tag_a[-1].get_attribute("href")
                 pub = j.find_element(By.CLASS_NAME, "writing").text
-                if pub in ["SBS", "KBS", "MBC", "국민일보", "세계일보"]:
-                    link_list.append(href)
+                link_list.append(href)
+                if pub in ["SBS", "KBS", "MBC", "국민일보", "세계일보", "뉴시스", "YTN", "MBN", "JTBC"]:
+                    use_link_list.append(href)
+                    print("pub: ", pub, 'href: ', href)
  
     print("link search end")
     # 바뀐 날짜에 대해 checkpoint 설정
@@ -52,7 +55,7 @@ def get_link_init(driver, date):
         for item in checkpoint:
             file.write(f"{item}\n")
     
-    return link_list
+    return use_link_list
 
 def get_link_normal(driver, date):
     url = "https://news.naver.com/main/list.naver?mode=LSD&mid=sec&sid1=001&date=" + date + "&page="
@@ -79,25 +82,16 @@ def get_link_normal(driver, date):
                 href = tag_a[-1].get_attribute("href")
                 link_list.append(href)
                 pub = j.find_element(By.CLASS_NAME, "writing").text
-                if pub in ["SBS", "KBS", "MBC", "국민일보", "세계일보"]:
+                if pub in ["SBS", "KBS", "MBC", "국민일보", "세계일보", "뉴시스", "YTN", "MBN", "JTBC"]:
                     use_link_list.append(href)
+                    print("pub: ", pub, 'href: ', href)
 
-            temp = link_list[-12:]
+            temp = link_list[-15:]
             count = sum(1 for elem in checkpoint if elem in temp) # checkpoint와 겹치는 링크의 개수
             
             # 링크 중복 발생
             if count >= 2:
-                # 중복 링크 제거
-                try:
-                    idx = temp.index(checkpoint[1])
-                    idx = temp.index(checkpoint[0])
-                except:
-                    pass
-
-                link_list = link_list[:-12 + idx]
-
                 init = False # while 탈출
-
 
     # 최초 3개의 링크를 checkpoint로 사용하기 위해 저장
     checkpoint = link_list[:3]
@@ -112,25 +106,28 @@ def get_article(driver, link_list):
     print("len(link_list):", len(link_list))
 
     for link in link_list:
-        driver.get(link)
-        time.sleep(0.3)
-        total = driver.find_element(By.CLASS_NAME, "end_container")
-        title_area = total.find_element(By.CLASS_NAME, "newsct_wrapper._GRID_TEMPLATE_COLUMN._STICKY_CONTENT")
-        title_info = title_area.find_element(By.CLASS_NAME, "media_end_head_title")
-        title = title_info.text
-        pub_info = title_area.find_element(By.CLASS_NAME, "media_end_head_top")
-        pub = pub_info.find_element(By.CSS_SELECTOR, "img").get_attribute("title")
-        article_info = title_area.find_element(By.ID, "dic_area")
-        article = article_info.text
-        input_area = title_area.find_element(By.CLASS_NAME, "media_end_head_info_datestamp")
-        input_area2 = input_area.find_element(By.CLASS_NAME, "media_end_head_info_datestamp_bunch")
-        input_time = input_area2.find_element(By.CSS_SELECTOR, "span").get_attribute("data-date-time")
-        # input_time = datetime.strftime(input_time, '%Y-%m-%d %H:%M:%S')
         try:
-            rep_info = title_area.find_element(By.CLASS_NAME, "media_end_head_journalist")
-            reporter = rep_info.text
+            driver.get(link)
+            time.sleep(0.3)
+            total = driver.find_element(By.CLASS_NAME, "end_container")
+            title_area = total.find_element(By.CLASS_NAME, "newsct_wrapper._GRID_TEMPLATE_COLUMN._STICKY_CONTENT")
+            title_info = title_area.find_element(By.CLASS_NAME, "media_end_head_title")
+            title = title_info.text
+            pub_info = title_area.find_element(By.CLASS_NAME, "media_end_head_top")
+            pub = pub_info.find_element(By.CSS_SELECTOR, "img").get_attribute("title")
+            article_info = title_area.find_element(By.ID, "dic_area")
+            article = article_info.text
+            input_area = title_area.find_element(By.CLASS_NAME, "media_end_head_info_datestamp")
+            input_area2 = input_area.find_element(By.CLASS_NAME, "media_end_head_info_datestamp_bunch")
+            input_time = input_area2.find_element(By.CSS_SELECTOR, "span").get_attribute("data-date-time")
+            # input_time = datetime.strftime(input_time, '%Y-%m-%d %H:%M:%S')
+            try:
+                rep_info = title_area.find_element(By.CLASS_NAME, "media_end_head_journalist")
+                reporter = rep_info.text
+            except:
+                reporter = None
         except:
-            reporter = None
+            pass
 
         # # 특정 언론사의 기사만 저장(데이터 양에 대한 비용과 Lambda 비용 문제)
         # if pub in ["SBS", "KBS", "MBC", "국민일보", "세계일보"]:
@@ -145,6 +142,7 @@ def get_article(driver, link_list):
             "pub": pub,
             "reporter": reporter  # 값이 없을 수 있는 필드
         }    
+        print(data["pub"], ": ", data["title"])
         df_add = pd.DataFrame([data])
         df = pd.concat([df, df_add], ignore_index=True)
     df_no_duplicates = df.drop_duplicates()
@@ -187,12 +185,12 @@ def konlpy(df):
         return stems
     logging.info("enter") 
 
-    # 엔터 삭제
+    # 엔터 삭제        
     for idx in range(len(articles)):
-        if type(articles[idx][0]) == str:
-            articles[idx] = remove_newline(articles[idx])            
-        else:
+        if type(articles[idx]) == float:
             articles[idx] = "내용 없음"
+        elif type(articles[idx]) == str:        
+            articles[idx] = remove_newline(articles[idx])
     logging.info("tokenize") 
 
     # 토큰화와 어간 추출
@@ -280,6 +278,8 @@ def get_representative_value():
         return [list(cluster) for cluster in merged_clusters]
 
     def get_representative_value(matrix, merged_clusters, threshold=70, determinant="median"):
+        print(matrix)
+        print(merged_clusters)
         # 대표값 측정에 사용하는 변수
         cluster_num = 0
         determinant_value = 0
@@ -289,7 +289,7 @@ def get_representative_value():
         
         for cluster in merged_clusters:
             for value in cluster: # value=4
-                above_threshold_values = matrix[value][(matrix[value] >= threshold) & (matrix[value] <= 100)]
+                above_threshold_values = matrix[value][(matrix[value] >= threshold) & (matrix[value] <= 101)]
                 # 각 클러스터에 대한 대표값 설정
                 
                 # 유사도가 높은 기사가 다수 존재하는 경우를 우선시
@@ -409,7 +409,7 @@ def track_update(search):
             articles_fianl = latest_article + articles
             print("articles_fianl", articles_fianl)
             df = pd.DataFrame({'article': articles_fianl})
-            matrix = konlpy(articles_fianl)
+            matrix = konlpy(df)
             for i in range(len(latest_article)):
                 for num in matrix[i][len(latest_article):]:
                     if num > 70:
