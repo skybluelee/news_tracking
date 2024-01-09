@@ -6,9 +6,9 @@ from opensearchpy import OpenSearch, RequestsHttpConnection
 region = 'ap-northeast-1'
 service = 'es'
 credentials = boto3.Session().get_credentials()
-awsauth = AWS4Auth("<access_key>", "<secret_key>", region, service)
+awsauth = AWS4Auth("AKIATNOQWNZFQBFA3PXJ", "OYgh1XYU/GjLVSALFFJ3qTqeZ6HoTh4dMfBvIFHn", region, service)
 
-host = "<opensearch endpoint>"
+host = "search-news-tracking-twuc6chnabn6eplckxlyenti44.ap-northeast-1.es.amazonaws.com"
 
 search = OpenSearch(
     hosts = [{'host': host, 'port': 443}],
@@ -33,7 +33,7 @@ def get_track_news():
                     "latest_doc": {
                         "top_hits": {
                             "size": 1,
-                            "sort": [{"new_input_time": {"order": "desc"}}],
+                            "sort": [{"input_time": {"order": "desc"}}],
                             "_source": ["title"]
                         }
                     }
@@ -48,9 +48,10 @@ def get_track_news():
 
     # article_list 초기화
     article_list = []
+    title_set = set()
 
     response = search.search(index='news', body={
-        "sort": [{"new_input_time": {"order": "desc"}}],  # 최신순으로 정렬
+        "sort": [{"input_time": {"order": "desc"}}],  # 최신순으로 정렬
         "query": {
             "exists": {
                 "field": "track"  # track 필드가 존재하는 데이터만 검색
@@ -73,12 +74,16 @@ def get_track_news():
             track = hit['_source'].get('track', '')
 
             if title_dict['track'] == track:
-                article_list.append({
+                data = {
                     'representative_title': title_dict['title'],  # 각 문서의 title을 representative_title로 설정
                     'title': title,
                     'article': f'{article} \n {input_time} \n {pub} \n {reporter}',
                     'link': link
-                })
+                }
+
+                if title not in title_set:
+                    title_set.add(title)
+                    article_list.append(data)
 
     return title_list, article_list
 
@@ -212,7 +217,7 @@ def get_news_w_time_w_search(request):
                     },
                     {
                     "range": {
-                        "new_input_time": {
+                        "input_time": {
                         "gte": start,
                         "lte": end,
                         "format": "yyyy-MM-dd HH:mm:ss"
@@ -237,7 +242,7 @@ def get_news_w_time_w_search(request):
                     },
                     {
                     "range": {
-                        "new_input_time": {
+                        "input_time": {
                         "gte": start,
                         "lte": end,
                         "format": "yyyy-MM-dd HH:mm:ss"
@@ -306,9 +311,10 @@ def get_news_w_time_wo_search(request):
     start, end = change_date(startDate, startTime, startSelect, endDate, endTime, endSelect)
 
     query = {
+        "size": 2000,
         "query": {
             "range": {
-                "new_input_time": {
+                "input_time": {
                     "gte": start,
                     "lte": end,
                     "format": "yyyy-MM-dd HH:mm:ss"
@@ -320,6 +326,7 @@ def get_news_w_time_wo_search(request):
     response  = search.search(index="news", body=query)
     hits = response['hits']['hits']
     representative_title_count = {}
+    title_set = set()
 
     title_list = []
     article_list = []
@@ -333,19 +340,24 @@ def get_news_w_time_wo_search(request):
         pub = source.get('pub', '')
         reporter = source.get('reporter', '')
 
-        if representative_title in representative_title_count:
-            representative_title_count[representative_title] += 1
-        else:
-            representative_title_count[representative_title] = 1
-
-        article_list.append({
+        data = {
             'representative_title': representative_title,
             'title': title,
             'article': f'{article} \n {input_time} \n {pub} \n {reporter}',
             'link': link
-        })
+        }
+
+        if title not in title_set:
+            title_set.add(title)
+            article_list.append(data)
+
+            if representative_title in representative_title_count:
+                representative_title_count[representative_title] += 1
+            else:
+                representative_title_count[representative_title] = 1        
 
     title_list = [{'title': title, 'count': count} for title, count in representative_title_count.items()]
+    title_list = sorted(title_list, key=lambda x: x['count'], reverse=True)
     repre_idx = []
 
     sorted_article_list = []

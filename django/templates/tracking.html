@@ -114,7 +114,7 @@
                                 <div class="article article-a" onclick="toggleData('{{ forloop.counter }}')">
                                     {{ data.title }}
                                 </div>
-                                <h5 class="fs-4 fw-bold">유사 기사 개수: {{ data.count }}개</h5>
+                                <h5 class="fs-4 fw-bold">유사 뉴스 개수: {{ data.count }}개</h5>
 
                                 <!-- 데이터 박스 -->
                                 <div id="data-{{ forloop.counter }}" class="data-box hidden-data">
@@ -127,7 +127,7 @@
                                                 <div style="text-align: left;">
                                                 {{ article_data.article|linebreaksbr }}
                                                 <br>
-                                                <a href="{{ article_data.link }}">기사 링크</a>
+                                                <a href="{{ article_data.link }}">뉴스 링크</a>
                                                 </div>
                                                 <br>
                                                 <button class="button" onclick="openMessageAndSendData('{{ article_data.title }}')" style="border: 1px solid #f8f9fa;">추적 해제</button>
