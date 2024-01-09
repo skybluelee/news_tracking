@@ -30,7 +30,7 @@ Django를 통해 OpenSearch의 데이터를 사용하여 검색 기능과 추적
 <br>
 <br>
 
-<img src="https://github.com/skybluelee/news_tracking/assets/107929903/d5735363-08cb-4058-ae45-78c72b5cefd4.png" width="600" height="700"/>
+<img src="https://github.com/skybluelee/news_tracking/assets/107929903/d5735363-08cb-4058-ae45-78c72b5cefd4.png" width="700" height="800"/>
 
 검색 결과는 유사한 기사가 많은 순서대로 보여준다. 
 
