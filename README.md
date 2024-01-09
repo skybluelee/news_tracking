@@ -36,7 +36,7 @@ Django를 통해 OpenSearch의 데이터를 사용하여 검색 기능과 추적
 
 추적 버튼을 누르면 기존 기사에 track 필드와 값을 추가하여 Airflow로 뉴스를 수집한 후에 track 필드의 뉴스들과 유사도를 비교하고 track 값을 입력하는 방식으로 유사한 뉴스를 추가한다.
 
-<img src="https://github.com/skybluelee/news_tracking/assets/107929903/a2ae7e2b-118e-4b65-9670-1c5642b9b0db.png" width="500" height="500"/>
+<img src="https://github.com/skybluelee/news_tracking/assets/107929903/a2ae7e2b-118e-4b65-9670-1c5642b9b0db.png" width="300" height="500"/>
 
 추적 뉴스는 화면의 track 바를 클릭하여 들어갈 수 있으며, 최신순으로 뉴스를 정렬한다.
 
