@@ -35,17 +35,26 @@ Django를 통해 OpenSearch의 데이터를 사용하여 검색 기능과 추적
 검색 결과는 유사한 기사가 많은 순서대로 보여준다. 
 
 해당 타이틀을 클릭하면 유사 기사의 내용을 확인할 수 있으며, 후속 기사가 궁금하다면 '해당 뉴스 추적' 버튼을 눌러 뉴스를 추적한다.
+<br>
+<br>
 
 <img src="https://github.com/skybluelee/news_tracking/assets/107929903/13f22605-e4fd-4565-858d-213043de50be.png" width="500" height="500"/>
 
 추적 버튼을 누르면 기존 기사에 track 필드와 값을 추가한다.
 
 이후 Airflow로 뉴스를 수집한 후에 track 필드의 뉴스들과 유사도를 비교하고 track 값을 입력하는 방식으로 유사한 뉴스를 추가한다.
+<br>
+<br>
 
 <img src="https://github.com/skybluelee/news_tracking/assets/107929903/a2ae7e2b-118e-4b65-9670-1c5642b9b0db.png" width="250" height="500"/>
 
 추적 뉴스는 화면의 track 바를 클릭하여 들어갈 수 있으며, 최신순으로 뉴스를 정렬한다.
 
+<br>
+<br>
+<img src="https://github.com/skybluelee/news_tracking/assets/107929903/7bf99d13-85a5-4546-9fd5-c66dc726a9bf.png" width="700" height="800"/>
+
+더 이상 뉴스를 추적하고 싶지 않으면 '추적 해제' 버튼을 눌러 track 필드의 값을 제거하여 추적을 중단한다.
 
 ## **프로젝트 상세**
 ### **Docker를 사용하여 Airflow, Spark, Selenium 이미지 사용**
