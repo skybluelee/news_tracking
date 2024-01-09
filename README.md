@@ -52,7 +52,7 @@ Django를 통해 OpenSearch의 데이터를 사용하여 검색 기능과 추적
 
 <br>
 <br>
-<img src="https://github.com/skybluelee/news_tracking/assets/107929903/7bf99d13-85a5-4546-9fd5-c66dc726a9bf.png" width="350" height="800"/>
+<img src="https://github.com/skybluelee/news_tracking/assets/107929903/7bf99d13-85a5-4546-9fd5-c66dc726a9bf.png" width="300" height="800"/>
 
 더 이상 뉴스를 추적하고 싶지 않으면 '추적 해제' 버튼을 눌러 track 필드의 값을 제거하여 추적을 중단한다.
 
