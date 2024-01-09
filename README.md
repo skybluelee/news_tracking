@@ -21,7 +21,7 @@ S3에 저장된 뉴스는 Lambda를 통해 OpenSearch로 데이터 전송.
 Django를 통해 OpenSearch의 데이터를 사용하여 검색 기능과 추적 기능이 있는 웹 서비스 구현.
 
 ## **상태도**
-<img src="https://github.com/skybluelee/news_tracking/assets/107929903/52a70277-b80b-4458-ba33-0d9ba9d9afa9.png" width="600" height="400"/>
+<img src="https://github.com/skybluelee/news_tracking/assets/107929903/52a70277-b80b-4458-ba33-0d9ba9d9afa9.png" width="700" height="450"/>
 
 ## **결과**
 <img src="https://github.com/skybluelee/news_tracking/assets/107929903/3070e1fb-f93b-48cb-a166-ee8036990101.png" width="550" height="400"/>
