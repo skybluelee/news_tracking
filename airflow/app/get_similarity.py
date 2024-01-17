@@ -18,7 +18,8 @@ def preprocess(text):
     return ' '.join(stems)
 
 # 불용어 목록
-stop_words = [] 
+with open('/opt/airflow/dags/stop_words.txt', 'r') as file:
+    stop_words = file.read()
 
 # 불용어 제거 함수 정의
 def remove_stopwords(text, stopwords):
