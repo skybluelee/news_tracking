@@ -18,7 +18,7 @@ def preprocess(text):
     return ' '.join(stems)
 
 # 불용어 목록
-stop_words = ['아', '가', '16일']    
+stop_words = [] 
 
 # 불용어 제거 함수 정의
 def remove_stopwords(text, stopwords):
